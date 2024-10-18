@@ -76,7 +76,13 @@ def print_inventory_items(items):
     <BLANKLINE>
 
     """
-    pass
+    invList = list_of_items(items)
+    if invList != "":
+        print(f"You have {invList}.")
+        print("")
+    else:
+        pass
+    
 
 
 def print_room(room):
@@ -208,10 +214,19 @@ def print_menu(exits, room_items, inv_items):
         # Print the exit name and where it leads to
         print_exit(direction, exit_leads_to(exits, direction))
 
-    #
-    # COMPLETE ME!
-    #
+    roomInvLength = len(room_items)
+    InvLength = len(inv_items)
+
+    i = 0
+    x = 0
+
+    for i in range(roomInvLength):
+        print(f'TAKE {room_items[i]["id"]} to take {room_items[i]["name"]}.')
+        i = i + 1
     
+    for x in range(InvLength):
+        print(f'DROP {inv_items[x]["id"]} to drop your {inv_items[x]["name"]}.')
+        x = x + 1
     print("What do you want to do?")
 
 
@@ -240,7 +255,11 @@ def execute_go(direction):
     (and prints the name of the room into which the player is
     moving). Otherwise, it prints "You cannot go there."
     """
-    pass
+    global current_room
+    
+    if is_valid_exit(current_room['exits'], direction):
+        current_room = current_room['exits'][direction]
+        current_room = rooms[current_room];
 
 
 def execute_take(item_id):
@@ -249,16 +268,31 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
-    pass
     
+    global current_room
+    global inventory
+
+    for item in current_room["items"]:
+        if item['id'] == item_id:
+            inventory.append(item)
+            current_room["items"].remove(item);
+            return
+    print("You cannot take that.")
 
 def execute_drop(item_id):
     """This function takes an item_id as an argument and moves this item from the
     player's inventory to list of items in the current room. However, if there is
     no such item in the inventory, this function prints "You cannot drop that."
     """
-    pass
+    global current_room
+    global inventory
     
+    for item in inventory:
+        if item['id'] == item_id:
+            inventory.remove(item)
+            current_room["items"].append(item)
+            return
+    print("You cannot drop that.")
 
 def execute_command(command):
     """This function takes a command (a list of words as returned by
